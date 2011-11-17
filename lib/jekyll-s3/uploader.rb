@@ -29,6 +29,10 @@ s3_bucket: your.blog.bucket.com
       def upload_to_s3!
         puts "Deploying _site/* to #{@s3_bucket}"
 
+        if @s3_endpoint
+            AWS::S3::DEFAULT_HOST.replace @s3_endpoint
+        end
+        
         AWS::S3::Base.establish_connection!(
             :access_key_id     => @s3_id,
             :secret_access_key => @s3_secret,
@@ -108,6 +112,8 @@ s3_bucket: your.blog.bucket.com
         @s3_id = config['s3_id']
         @s3_secret = config['s3_secret']
         @s3_bucket = config['s3_bucket']
+        # optional
+        @s3_endpoint = config['s3_endpoint']
 
         [@s3_id, @s3_secret, @s3_bucket].select { |k| k.nil? || k == '' }.empty?
       end
