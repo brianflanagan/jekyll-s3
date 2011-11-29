@@ -47,25 +47,10 @@ s3_bucket: your.blog.bucket.com
             AWS::S3::DEFAULT_HOST.replace @s3_endpoint
         end
         
-        proxy = nil
-        if @proxy_host
-            proxy = {:host => @proxy_host}
-            if @proxy_port
-                proxy[:port] = @proxy_port
-            end
-            if @proxy_user
-                proxy[:user] = @proxy_user
-            end
-            if @proxy_pass
-                proxy[:password] = @proxy_pass
-            end
-        end
-        
         AWS::S3::Base.establish_connection!(
             :access_key_id     => @s3_id,
             :secret_access_key => @s3_secret,
-            :use_ssl => true,
-            :proxy => proxy
+            :use_ssl => true
         )
         unless AWS::S3::Service.buckets.map(&:name).include?(@s3_bucket)
           puts("Creating bucket #{@s3_bucket}")
@@ -144,10 +129,6 @@ s3_bucket: your.blog.bucket.com
         @s3_bucket = config['s3_bucket']
         # optional
         @s3_endpoint = config['s3_endpoint']
-        @proxy_host = config['proxy_host']
-        @proxy_port = config['proxy_port']
-        @proxy_user = config['proxy_user']
-        @proxy_pass = config['proxy_pass']
 
         [@s3_id, @s3_secret, @s3_bucket].select { |k| k.nil? || k == '' }.empty?
       end
